@@ -1,0 +1,29 @@
+import pandas as pd
+from google.colab import files
+uploaded = files.upload()
+stocks = pd.read_csv("apple_stock_updown_2024_2025.csv")
+stocks
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.scatterplot(x = 'Date', y = "UpDown", data = stocks)
+plt.show()
+x = stocks.iloc[:,:-1]
+x = stocks.drop("Date", axis=1)
+y = stocks["UpDown"]
+from sklearn.model_selection import train_test_split
+x_train , x_test , y_train , y_test = train_test_split(x , y , test_size = 0.7,random_state=42 )
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression()
+lr.fit(x_train , y_train)
+date_to_predict = input("enter your date :")
+row = stocks[stocks["Date"] == date_to_predict]
+
+if row.empty:
+  print(f"Date {date_to_predict} not found in dataset.")
+else:
+ input_features = row.drop(columns=["Date"])
+ prediction = lr.predict(input_features)
+ result = "Up" if prediction == 1 else "Down"
+ print(f"Prediction for {date_to_predict}: {result}")
